@@ -216,9 +216,13 @@ class HCSTVGDataset(data.Dataset):
             for idx in range(len(gt_file['target_bboxs'])):
                 bbox = gt_file['target_bboxs'][idx]
                 x1, y1, w, h = bbox
-                bbox_array.append(np.array([x1,y1,min(x1+w, gt_file['width']), min(y1+h, gt_file['height'])]))
-                assert x1 <= gt_file['width'] and x1 + w <= gt_file['width']
-                assert y1 <= gt_file['height'] and y1 + h <= gt_file['height']
+                x2 = x1 + w
+                y2 = y1 + h
+                x1 = min(max(x1, 0), gt_file['width'])
+                y1 = min(max(y1, 0), gt_file['height'])
+                x2 = min(max(x2, 0), gt_file['width'])
+                y2 = min(max(y2, 0), gt_file['height'])
+                bbox_array.append(np.array([x1, y1, x2, y2]))
             
             bbox_array = np.array(bbox_array)
             assert bbox_array.shape[0] == temp_gt_end - temp_gt_begin + 1
